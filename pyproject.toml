@@ -6,7 +6,6 @@ authors = ["Hojung Yun <hojung.yun@gmail.com>"]
 readme = "README.md"
 
 license = "MIT"
-readme = "README.md"
 homepage = "https://github.com/hojungyun/hjlab-email"
 repository = "https://github.com/hojungyun/hjlab-email"
 keywords = ["hjlab", "email"]
