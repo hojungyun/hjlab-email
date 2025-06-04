@@ -4,6 +4,7 @@ version = "0.1.1"
 description = "Print hello"
 authors = ["Hojung Yun <hojung.yun@gmail.com>"]
 readme = "README.md"
+
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/hojungyun/hjlab-email"
