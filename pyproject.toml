@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hjlab-email"
-version = "1.0.0"
+version = "1.0.1"
 description = "Print hello"
 authors = ["Hojung Yun <hojung.yun@gmail.com>"]
 readme = "README.md"
