@@ -1,0 +1,83 @@
+---
+
+#
+# Updated in 2025.2
+# for my-python-example: comment detect-private-key and debug-statements hooks and flake8
+# for all: uncomment detect-private-key and debug-statements hooks and flake8
+#
+
+default_language_version:
+  python: python3.11
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    # repo 사용으로 프로젝트에서 따러 패키지를 설치할 필요 없음 (설정 파일은 필요)
+    # 동적으로 변경
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: trailing-whitespace  # W291을 해결하는 훅 추가
+      - id: end-of-file-fixer  # 파일 끝 공백 수정
+      - id: detect-private-key  # COMMENT ONLY FOR MY-PY-EXAMPLE-2024
+      - id: debug-statements  # COMMENT ONLY FOR MY-PY-EXAMPLE-2024
+      - id: check-symlinks
+
+  - repo: https://github.com/psf/black
+    # repo 사용으로 프로젝트에서 따러 패키지를 설치할 필요 없음
+    # 동적으로 변경
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: ["--line-length=120"] # 기본 88자
+        # exclude: >
+        #   (?x)^(
+        #           .*manage\.py|
+        #           .*api(\/|\\)migrations|
+        #           .*snapshots*
+        #   )
+
+# COMMENT ONLY FOR MY-PY-EXAMPLE-2024
+  - repo: https://github.com/PyCQA/flake8
+    # repo 사용으로 프로젝트에서 따러 패키지를 설치할 필요 없음 (설정 파일은 필요)
+    # 위 hooks들을 거치면서 동적으로 수정된 후의 코드를 검사하여 정보만 제공. 동적으로 변경하지 않음
+    # 프로젝트 내 '.flake8' 파일이 설정파일로 사용되지 않음. 여기서 설정
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: ["--ignore=F401,E203,E402,E501,E712,F405,W503,F811"]
+        # exclude: >
+        #   (?x)^(
+        #           .*manage\.py|
+        #           .*r2d2_backend_v2(\/|\\)settings*|
+        #           .*api(\/|\\)migrations|
+        #           .*compose(\/|\\)services(\/|\\)emulator*|
+        #           .*snapshots*
+        #   )
+
+#  - repo: https://github.com/adrienverge/yamllint.git
+#    # repo 사용으로 프로젝트에서 따러 패키지를 설치할 필요 없음 (설정 파일은 필요)
+#    rev: v1.32.0
+#    hooks:
+#      - id: yamllint
+
+#  - repo: https://github.com/PyCQA/bandit
+#    # to enable when time allows to debug the blocking errors
+#    rev: 1.7.5
+#    hooks:
+#      - id: bandit
+#        name: bandit
+#        description: 'Bandit is a tool for finding common security issues\
+#         in Python code'
+#        entry: bandit
+#        language: python
+#        types: [python]
+
+#  - repo: local
+#    hooks:
+#      - id: pytest
+#        name: pytest
+#        stages: [push]
+#        entry: poetry run pytest -vv
+#        exclude: .*
+#        language: python
+#        always_run: true

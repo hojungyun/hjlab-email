@@ -45,9 +45,7 @@ class EmailService:
         self.sender_password: str = password
         self._smtp_client: aiosmtplib.SMTP | None = None
         self._connection_lock = asyncio.Lock()
-        logger.debug(
-            f"EmailService initialized: {self.sender_email} ({self.smtp_server}:{self.smtp_port})"
-        )
+        logger.debug(f"EmailService initialized: {self.sender_email} ({self.smtp_server}:{self.smtp_port})")
 
     async def __aenter__(self):
         """Called when entering the asynchronous context manager."""
@@ -96,7 +94,9 @@ class EmailService:
                 return self._smtp_client, "SMTP connection and login successful."
             except aiosmtplib.SMTPAuthenticationError as e:
                 self._smtp_client = None  # Reset client on connection failure
-                auth_error_msg = f"SMTP authentication error: {e}. Please check your Naver SMTP settings and credentials."
+                auth_error_msg = (
+                    f"SMTP authentication error: {e}. Please check your Naver SMTP settings and credentials."
+                )
                 logger.error(auth_error_msg)
                 return None, auth_error_msg
             except aiosmtplib.SMTPException as e:
@@ -111,16 +111,16 @@ class EmailService:
                 return None, unexpected_error_msg
 
     async def send_email(
-            self,
-            recipients: str | list[str],
-            subject: str,
-            body_text: str | None = None,
-            body_html: str | None = None,
-            cc_recipients: str | list[str] | None = None,
-            bcc_recipients: str | list[str] | None = None,
-            attachments: list[dict[str, str]] | None = None,
-            max_retries: int = 1,
-            retry_delay_seconds: int = 5,
+        self,
+        recipients: str | list[str],
+        subject: str,
+        body_text: str | None = None,
+        body_html: str | None = None,
+        cc_recipients: str | list[str] | None = None,
+        bcc_recipients: str | list[str] | None = None,
+        attachments: list[dict[str, str]] | None = None,
+        max_retries: int = 1,
+        retry_delay_seconds: int = 5,
     ) -> tuple[bool, str]:
         """
         Asynchronously sends an email.
@@ -159,26 +159,18 @@ class EmailService:
             Exception: May occur during file reading or other unexpected errors.
         """
         if not all([self.smtp_server, self.sender_email, self.sender_password]):
-            logger.error(
-                "SMTP server, sender email, or password is not set."
-            )
+            logger.error("SMTP server, sender email, or password is not set.")
             return (
                 False,
                 "SMTP server, sender email, or password is not set.",
             )
 
         _recipients = [recipients] if isinstance(recipients, str) else recipients
-        _cc_recipients = (
-            [cc_recipients] if isinstance(cc_recipients, str) else cc_recipients
-        )
-        _bcc_recipients = (
-            [bcc_recipients] if isinstance(bcc_recipients, str) else bcc_recipients
-        )
+        _cc_recipients = [cc_recipients] if isinstance(cc_recipients, str) else cc_recipients
+        _bcc_recipients = [bcc_recipients] if isinstance(bcc_recipients, str) else bcc_recipients
 
         if not _recipients:
-            logger.warning(
-                "No recipient email address specified. Cannot send email."
-            )
+            logger.warning("No recipient email address specified. Cannot send email.")
             return False, "No recipient email address specified."
 
         # Email validity check
@@ -222,9 +214,7 @@ class EmailService:
                     with open(attachment_path, "rb") as f:
                         attachment_part = MIMEApplication(f.read())
                         filename_to_use = (
-                            attachment_filename
-                            if attachment_filename
-                            else os.path.basename(attachment_path)
+                            attachment_filename if attachment_filename else os.path.basename(attachment_path)
                         )
                         attachment_part.add_header(
                             "Content-Disposition",
@@ -232,18 +222,12 @@ class EmailService:
                             filename=filename_to_use,
                         )
                         msg.attach(attachment_part)
-                        logger.debug(
-                            f"Attachment '{filename_to_use}' ({attachment_path}) added."
-                        )
+                        logger.debug(f"Attachment '{filename_to_use}' ({attachment_path}) added.")
                 except FileNotFoundError:
-                    logger.error(
-                        f"Attachment file '{attachment_path}' not found."
-                    )
+                    logger.error(f"Attachment file '{attachment_path}' not found.")
                     return False, f"Attachment file {attachment_path} not found."
                 except Exception as e:
-                    logger.exception(
-                        f"An error occurred while attaching file '{attachment_path}': {e}"
-                    )
+                    logger.exception(f"An error occurred while attaching file '{attachment_path}': {e}")
                     return (
                         False,
                         f"An error occurred while attaching file {attachment_path}: {e}",
@@ -262,9 +246,7 @@ class EmailService:
                             f"Email sending failed (Attempt {attempt + 1}/{max_retries + 1}, Subject: {subject}): {message}. Retrying in {retry_delay_seconds} seconds..."
                         )
                         await asyncio.sleep(retry_delay_seconds)
-                        self._smtp_client = (
-                            None  # Reset client on connection failure to force re-connection
-                        )
+                        self._smtp_client = None  # Reset client on connection failure to force re-connection
                         continue
                     else:
                         logger.error(f"Email sending final failure (Subject: {subject}): {message}")
