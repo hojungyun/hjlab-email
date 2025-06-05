@@ -1,1 +1,1 @@
-from .my_function import print_hello
+from .email_service import EmailService
